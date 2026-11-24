@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
+/* Lucian UX/UI Prompt Palette (--ux-* Tokens, Light & Dark) */
+:root {
+  color-scheme: light;
+  --ux-page: #f4f2ee;
+  --ux-surface: #ffffff;
+  --ux-surface-2: #f5f3ef;
+  --ux-surface-3: #eae7e1;
+  --ux-ink: #16151b;
+  --ux-ink-2: #57535f;
+  --ux-ink-3: #8e8a97;
+  --ux-line: rgba(22, 21, 27, 0.09);
+  --ux-line-2: rgba(22, 21, 27, 0.17);
+  --ux-accent: #2563eb;
+  --ux-accent-2: #0284c7;
+  --ux-accent-soft: rgba(37, 99, 235, 0.12);
+  --ux-accent-ink: #ffffff;
+  --ux-mint: #119c72;
+  --ux-mint-soft: rgba(17, 156, 114, 0.12);
+  --ux-mint-ink: #ffffff;
+  --ux-warn: #d6731e;
+  --ux-warn-soft: rgba(214, 115, 30, 0.12);
+  --ux-warn-ink: #ffffff;
+  --ux-danger: #d93a55;
+  --ux-danger-soft: rgba(217, 58, 85, 0.12);
+  --ux-danger-ink: #ffffff;
+  --ux-glass: rgba(255, 255, 255, 0.58);
+  --ux-glass-line: rgba(255, 255, 255, 0.85);
+  --ux-shadow: rgba(15, 23, 42, 0.1);
+  --ux-shadow-strong: rgba(15, 23, 42, 0.24);
+  --ux-grad: linear-gradient(120deg, #2563eb, #0ea5e9 55%, #119c72);
+  --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ux-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
+
+  /* Mapped project tokens */
+  --bg-page: var(--ux-page);
+  --bg-surface: var(--ux-surface);
+  --bg-muted: var(--ux-surface-2);
+  --border-subtle: var(--ux-line);
+  --text-primary: var(--ux-ink);
+  --text-secondary: var(--ux-ink-2);
+
+  /* KSA Framework Semantic Palette */
+  --ksa-k: var(--ux-accent);
+  --ksa-k-soft: var(--ux-accent-soft);
+  --ksa-s: var(--ux-mint);
+  --ksa-s-soft: var(--ux-mint-soft);
+  --ksa-a: var(--ux-warn);
+  --ksa-a-soft: var(--ux-warn-soft);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ux-page: #07080d;
+    --ux-surface: #13141c;
+    --ux-surface-2: #1a1b25;
+    --ux-surface-3: #252632;
+    --ux-ink: #f4f0e8;
+    --ux-ink-2: rgba(244, 240, 232, 0.68);
+    --ux-ink-3: rgba(244, 240, 232, 0.42);
+    --ux-line: rgba(255, 255, 255, 0.08);
+    --ux-line-2: rgba(255, 255, 255, 0.16);
+    --ux-accent: #8b5cf6;
+    --ux-accent-2: #a78bfa;
+    --ux-accent-soft: rgba(139, 92, 246, 0.18);
+    --ux-accent-ink: #ffffff;
+    --ux-mint: #7ee8c0;
+    --ux-mint-soft: rgba(126, 232, 192, 0.15);
+    --ux-mint-ink: #0b0c12;
+    --ux-warn: #ffb26b;
+    --ux-warn-soft: rgba(255, 178, 107, 0.15);
+    --ux-warn-ink: #0b0c12;
+    --ux-danger: #ff7d8c;
+    --ux-danger-soft: rgba(255, 125, 140, 0.15);
+    --ux-danger-ink: #0b0c12;
+    --ux-glass: rgba(255, 255, 255, 0.07);
+    --ux-glass-line: rgba(255, 255, 255, 0.18);
+    --ux-shadow: rgba(0, 0, 0, 0.45);
+    --ux-shadow-strong: rgba(0, 0, 0, 0.72);
+    --ux-grad: linear-gradient(120deg, #8b5cf6, #a78bfa 55%, #7ee8c0);
+  }
+}
+
+:root[data-theme="dark"],
+.dark {
+  color-scheme: dark;
+  --ux-page: #07080d;
+  --ux-surface: #13141c;
+  --ux-surface-2: #1a1b25;
+  --ux-surface-3: #252632;
+  --ux-ink: #f4f0e8;
+  --ux-ink-2: rgba(244, 240, 232, 0.68);
+  --ux-ink-3: rgba(244, 240, 232, 0.42);
+  --ux-line: rgba(255, 255, 255, 0.08);
+  --ux-line-2: rgba(255, 255, 255, 0.16);
+  --ux-accent: #8b5cf6;
+  --ux-accent-2: #a78bfa;
+  --ux-accent-soft: rgba(139, 92, 246, 0.18);
+  --ux-accent-ink: #ffffff;
+  --ux-mint: #7ee8c0;
+  --ux-mint-soft: rgba(126, 232, 192, 0.15);
+  --ux-mint-ink: #0b0c12;
+  --ux-warn: #ffb26b;
+  --ux-warn-soft: rgba(255, 178, 107, 0.15);
+  --ux-warn-ink: #0b0c12;
+  --ux-danger: #ff7d8c;
+  --ux-danger-soft: rgba(255, 125, 140, 0.15);
+  --ux-danger-ink: #0b0c12;
+  --ux-glass: rgba(255, 255, 255, 0.07);
+  --ux-glass-line: rgba(255, 255, 255, 0.18);
+  --ux-shadow: rgba(0, 0, 0, 0.45);
+  --ux-shadow-strong: rgba(0, 0, 0, 0.72);
+  --ux-grad: linear-gradient(120deg, #8b5cf6, #a78bfa 55%, #7ee8c0);
+}
+
+@theme inline {
+  --font-sans: "Pretendard Variable", Pretendard, var(--font-sans-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-display-montserrat), "Pretendard Variable", Pretendard, var(--font-sans-inter), sans-serif;
+  --font-mono: var(--font-mono-jetbrains), ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--ux-page);
+    color: var(--ux-ink);
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-wrap: break-word;
+  }
+
+  :where(.ux) button {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display-montserrat), "Pretendard Variable", Pretendard, var(--font-sans-inter), sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Lucian .ux Base Utility & Motion Discipline */
+.ux {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ux :focus-visible {
+  outline: 2px solid var(--ux-accent);
+  outline-offset: 3px;
+}
+
+@keyframes ux-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes ux-pop-check {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ux-draw-check {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes ux-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Spotlight Surface Card (#050) */
+.ux-spotlight-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.28s var(--ux-ease),
+    border-color 0.25s var(--ux-ease),
+    box-shadow 0.28s var(--ux-ease);
+}
+
+.ux-spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--ux-accent) 13%, transparent),
+    transparent 65%
+  );
+  transition: opacity 0.3s var(--ux-ease);
+}
+
+.ux-spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* Skeleton Shimmer Loader */
+.ux-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.ux-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ux-surface) 70%, transparent),
+    transparent
+  );
+  animation: ux-shimmer 1.4s var(--ux-ease) infinite;
+}
+
+@keyframes ux-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Examiner Ink Pen-Stroke Highlight */
+.ux-ink-mark {
+  background-image: linear-gradient(
+    var(--ink-color, var(--ux-accent-soft)),
+    var(--ink-color, var(--ux-accent-soft))
+  );
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  background-position: 0 0;
+  transition: background-size 0.55s var(--ux-ease);
+  border-radius: 3px;
+}
+
+.ux-ink-mark[data-active="true"] {
+  background-size: 100% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ux,
+  .ux *,
+  .ux *::before,
+  .ux *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

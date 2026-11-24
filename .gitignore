@@ -1,0 +1,24 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+
+# Next.js
+/.next/
+/out/
+
+# Local SQLite & Audio Storage
+/data/
+/storage/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing & Build artifacts
+/coverage
+*.tsbuildinfo
+next-env.d.ts
+.vercel
