@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
-import type { AppDatabase } from "@/db";
+import { db, resolveRuntimeDb, type AppDatabase } from "@/db";
 import { lessons } from "@/db/schema";
 import { ensureSchemaInitialized } from "@/lib/db/autoMigrate";
+import { withSuppressedBlobFlush } from "@/lib/db/vercelBlobSqlite";
 
 export type LessonSeedRow = typeof lessons.$inferInsert;
 
@@ -20,15 +21,16 @@ export async function seedSkillLessonsBatch(
   skill: LessonSkill,
   rows: LessonSeedRow[]
 ): Promise<void> {
-  const dbKey = database as unknown as object;
+  await ensureSchemaInitialized(database);
+
+  const targetDb = database === db ? resolveRuntimeDb() : database;
+  const dbKey = targetDb as unknown as object;
   let cachedSkills = seededSkillsCache.get(dbKey);
   if (cachedSkills?.has(skill)) {
     return;
   }
 
-  await ensureSchemaInitialized(database);
-
-  const existing = await database
+  const existing = await targetDb
     .select({ id: lessons.id })
     .from(lessons)
     .where(eq(lessons.skill, skill));
@@ -36,9 +38,13 @@ export async function seedSkillLessonsBatch(
   const existingIds = new Set(existing.map((r) => r.id));
   const missing = rows.filter((r) => !existingIds.has(r.id));
 
-  for (let i = 0; i < missing.length; i += BATCH_SIZE) {
-    const chunk = missing.slice(i, i + BATCH_SIZE);
-    await database.insert(lessons).values(chunk).onConflictDoNothing();
+  if (missing.length > 0) {
+    await withSuppressedBlobFlush(async () => {
+      for (let i = 0; i < missing.length; i += BATCH_SIZE) {
+        const chunk = missing.slice(i, i + BATCH_SIZE);
+        await targetDb.insert(lessons).values(chunk).onConflictDoNothing();
+      }
+    });
   }
 
   if (!cachedSkills) {

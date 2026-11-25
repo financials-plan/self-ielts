@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { requireApiSession } from "@/lib/auth/session";
 
@@ -10,13 +11,16 @@ export async function POST(request: Request) {
     return authResult.errorResponse;
   }
 
-  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
-  if (!token) {
+  const hasBlob = Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN?.trim() ||
+      process.env.BLOB_STORE_ID?.trim()
+  );
+  if (!hasBlob) {
     return NextResponse.json({
       uploaded: false,
       cloudConfigured: false,
       message:
-        "BLOB_READ_WRITE_TOKEN chưa cấu hình — bản ghi được giữ an toàn trên IndexedDB trình duyệt (0đ).",
+        "Vercel Blob chưa cấu hình — bản ghi được giữ an toàn trên IndexedDB trình duyệt (0đ).",
     });
   }
 
@@ -57,38 +61,16 @@ export async function POST(request: Request) {
   const pathname = `speaking/${userId}/${crypto.randomUUID()}.webm`;
 
   try {
-    const buffer = await file.arrayBuffer();
-    const res = await fetch(
-      `https://blob.vercel-storage.com/${encodeURI(pathname)}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "content-type": mime,
-          "x-add-random-suffix": "1",
-          "x-api-version": "7",
-        },
-        body: buffer,
-        signal: AbortSignal.timeout(20_000),
-      }
-    );
+    const blobResult = await put(pathname, file, {
+      access: "private",
+      addRandomSuffix: true,
+      contentType: mime,
+    });
 
-    if (!res.ok) {
-      return NextResponse.json(
-        {
-          uploaded: false,
-          cloudConfigured: true,
-          error: "Không thể đồng bộ lên Vercel Blob Free. Bản nháp IndexedDB vẫn được giữ.",
-        },
-        { status: 502 }
-      );
-    }
-
-    const blobJson = (await res.json()) as { url?: string; pathname?: string };
     return NextResponse.json({
       uploaded: true,
       cloudConfigured: true,
-      url: blobJson.url ?? pathname,
+      url: blobResult.pathname || blobResult.url,
       sizeBytes: file.size,
     });
   } catch {

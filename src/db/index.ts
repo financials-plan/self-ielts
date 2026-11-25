@@ -4,6 +4,12 @@ import { createClient, type Client } from "@libsql/client";
 import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import { drizzle as drizzleD1 } from "drizzle-orm/d1";
 import * as schema from "./schema";
+import {
+  getBlobDbGeneration,
+  getOrCreateVercelBlobLibsqlClient,
+  isVercelBlobSqliteEnabled,
+  VERCEL_TMP_SQLITE_PATH,
+} from "@/lib/db/vercelBlobSqlite";
 
 export type AppDatabase = LibSQLDatabase<typeof schema>;
 
@@ -30,8 +36,18 @@ function ensureLocalSqliteDir(databaseUrl: string): void {
   fs.mkdirSync(path.dirname(resolvedPath), { recursive: true });
 }
 
+function getDefaultDatabaseUrl(): string {
+  if (process.env.DATABASE_URL?.trim()) {
+    return process.env.DATABASE_URL.trim();
+  }
+  if (process.env.VERCEL) {
+    return `file:${VERCEL_TMP_SQLITE_PATH}`;
+  }
+  return "file:./data/ielts.db";
+}
+
 export function createDbClient(
-  url = process.env.DATABASE_URL || "file:./data/ielts.db",
+  url = getDefaultDatabaseUrl(),
   authToken = process.env.DATABASE_AUTH_TOKEN || undefined
 ): { client: Client; db: AppDatabase } {
   ensureLocalSqliteDir(url);
@@ -47,6 +63,8 @@ const d1DrizzleCache = new WeakMap<object, AppDatabase>();
 
 const globalForDb = globalThis as unknown as {
   __ieltsDb?: AppDatabase;
+  __ieltsBlobDb?: AppDatabase;
+  __ieltsBlobGen?: number;
 };
 
 export function resolveRuntimeDb(): AppDatabase {
@@ -61,6 +79,18 @@ export function resolveRuntimeDb(): AppDatabase {
     ) as unknown as AppDatabase;
     d1DrizzleCache.set(d1Binding, d1Db);
     return d1Db;
+  }
+
+  if (isVercelBlobSqliteEnabled()) {
+    const gen = getBlobDbGeneration();
+    if (!globalForDb.__ieltsBlobDb || globalForDb.__ieltsBlobGen !== gen) {
+      globalForDb.__ieltsBlobDb = drizzle(
+        getOrCreateVercelBlobLibsqlClient(),
+        { schema }
+      );
+      globalForDb.__ieltsBlobGen = gen;
+    }
+    return globalForDb.__ieltsBlobDb;
   }
 
   if (!globalForDb.__ieltsDb) {

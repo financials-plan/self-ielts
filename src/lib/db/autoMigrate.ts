@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm";
 import { db, resolveRuntimeDb, type AppDatabase } from "@/db";
+import {
+  isVercelBlobSqliteEnabled,
+  syncSqliteFromBlobIfNeeded,
+  withSuppressedBlobFlush,
+} from "@/lib/db/vercelBlobSqlite";
 
 const SCHEMA_STATEMENTS: string[] = [
   `CREATE TABLE IF NOT EXISTS user (
@@ -197,6 +202,10 @@ const initializedDbs = new WeakSet<object>();
 export async function ensureSchemaInitialized(
   database: AppDatabase = db
 ): Promise<void> {
+  if (database === db && isVercelBlobSqliteEnabled()) {
+    await syncSqliteFromBlobIfNeeded();
+  }
+
   const targetDb = database === db ? resolveRuntimeDb() : database;
   const cacheKey = targetDb as unknown as object;
 
@@ -204,9 +213,11 @@ export async function ensureSchemaInitialized(
     return;
   }
 
-  for (const stmt of SCHEMA_STATEMENTS) {
-    await targetDb.run(sql.raw(stmt));
-  }
+  await withSuppressedBlobFlush(async () => {
+    for (const stmt of SCHEMA_STATEMENTS) {
+      await targetDb.run(sql.raw(stmt));
+    }
+  });
 
   initializedDbs.add(cacheKey);
 }
