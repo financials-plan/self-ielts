@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getCloudflareEnv } from "@/db";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
@@ -10,7 +11,11 @@ export interface EncryptedSecretPayload {
 }
 
 function deriveKey(rawSecret?: string): Buffer {
-  const secret = rawSecret ?? process.env.BYOK_ENCRYPTION_KEY;
+  const cfKey = getCloudflareEnv()?.BYOK_ENCRYPTION_KEY;
+  const secret =
+    rawSecret ??
+    (process.env.BYOK_ENCRYPTION_KEY ||
+      (typeof cfKey === "string" ? cfKey : undefined));
   if (!secret || secret.trim().length < 16) {
     throw new Error(
       "BYOK_ENCRYPTION_KEY thiếu hoặc quá ngắn (yêu cầu tối thiểu 16 ký tự hoặc chuỗi hex 64 ký tự)."

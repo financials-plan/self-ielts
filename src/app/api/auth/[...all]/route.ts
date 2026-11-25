@@ -1,4 +1,12 @@
-import { auth } from "@/lib/auth/auth";
-import { toNextJsHandler } from "better-auth/next-js";
+import { getAuth } from "@/lib/auth/auth";
+import { ensureSchemaInitialized } from "@/lib/db/autoMigrate";
 
-export const { GET, POST } = toNextJsHandler(auth.handler);
+export async function GET(request: Request) {
+  await ensureSchemaInitialized();
+  return getAuth().handler(request);
+}
+
+export async function POST(request: Request) {
+  await ensureSchemaInitialized();
+  return getAuth().handler(request);
+}

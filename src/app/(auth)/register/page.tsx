@@ -176,15 +176,17 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form method="post" onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <label htmlFor="reg-name" className="text-sm font-medium">
                   Tên hiển thị
                 </label>
                 <Input
                   id="reg-name"
+                  name="name"
                   type="text"
                   required
+                  autoComplete="name"
                   placeholder="Ví dụ: Minh Anh"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -197,6 +199,7 @@ export default function RegisterPage() {
                 </label>
                 <Input
                   id="reg-email"
+                  name="email"
                   type="email"
                   required
                   autoComplete="email"
@@ -208,6 +211,7 @@ export default function RegisterPage() {
 
               <PasswordStrengthField
                 id="reg-password"
+                name="password"
                 label="Mật khẩu"
                 value={password}
                 onChange={(val) => {
@@ -222,6 +226,7 @@ export default function RegisterPage() {
                 </label>
                 <Input
                   id="reg-confirm"
+                  name="confirmPassword"
                   type="password"
                   required
                   autoComplete="new-password"

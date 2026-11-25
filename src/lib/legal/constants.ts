@@ -2,7 +2,7 @@ export const LEGAL_POLICY_VERSION = "v1.0-2026-11-24";
 
 export const LEGAL_EFFECTIVE_DATE = "24/11/2026";
 
-export const LEGAL_CONTACT_EMAIL = "privacy@self-ielts.local";
+export const LEGAL_CONTACT_EMAIL = "support@self-ielts.org";
 
 export const CONSENT_TYPES = [
   "terms_and_privacy",

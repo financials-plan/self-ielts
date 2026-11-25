@@ -1,11 +1,13 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
-import { auth, type AppSession } from "./auth";
+import { ensureSchemaInitialized } from "@/lib/db/autoMigrate";
+import { getAuth, type AppSession } from "./auth";
 
 export async function getServerSession(): Promise<AppSession | null> {
+  await ensureSchemaInitialized();
   const reqHeaders = await headers();
-  const session = await auth.api.getSession({
+  const session = await getAuth().api.getSession({
     headers: reqHeaders,
   });
   return session ?? null;

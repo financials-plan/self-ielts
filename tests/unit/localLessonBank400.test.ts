@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createDbClient, type AppDatabase } from "@/db";
 import { lessons } from "@/db/schema";
+import { ensureSchemaInitialized } from "@/lib/db/autoMigrate";
 import { ensureListeningLessonsSeeded } from "@/lib/db/listeningService";
 import { ensureReadingLessonsSeeded } from "@/lib/db/readingService";
 import { ensureSpeakingLessonsSeeded } from "@/lib/db/speakingService";
@@ -227,5 +228,33 @@ describe("400+ Offline Local Lesson Bank (Zero External API)", () => {
     expect(countMap.get("listening")).toBe(109);
     expect(countMap.get("writing")).toBe(109);
     expect(countMap.get("speaking")).toBe(108);
+  });
+
+  it("auto-initializes all 14 tables and seeds lessons on an empty database without manual migration", async () => {
+    const { client: emptyClient, db: emptyDb } = createDbClient(":memory:");
+    try {
+      await ensureSchemaInitialized(emptyDb);
+      await ensureReadingLessonsSeeded(emptyDb, 1_760_000_000_000);
+
+      const tableRows = await emptyClient.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'"
+      );
+      const tableNames = new Set(
+        tableRows.rows.map((r) => String(r.name))
+      );
+      expect(tableNames.has("user")).toBe(true);
+      expect(tableNames.has("account")).toBe(true);
+      expect(tableNames.has("session")).toBe(true);
+      expect(tableNames.has("lessons")).toBe(true);
+      expect(tableNames.has("knowledge_cards")).toBe(true);
+      expect(tableNames.has("user_consents")).toBe(true);
+
+      const readingRows = await emptyClient.execute(
+        "SELECT count(*) as cnt FROM lessons WHERE skill='reading'"
+      );
+      expect(Number(readingRows.rows[0]?.cnt ?? 0)).toBe(109);
+    } finally {
+      emptyClient.close();
+    }
   });
 });

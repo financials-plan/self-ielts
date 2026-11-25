@@ -10,6 +10,7 @@ const PROTECTED_PREFIXES = [
   "/speaking",
   "/vault",
   "/errors",
+  "/import",
 ];
 
 function hasBetterAuthSessionCookie(request: NextRequest): boolean {
@@ -49,5 +50,6 @@ export const config = {
     "/speaking/:path*",
     "/vault/:path*",
     "/errors/:path*",
+    "/import/:path*",
   ],
 };

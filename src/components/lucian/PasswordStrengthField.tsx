@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface PasswordStrengthFieldProps {
   id: string;
+  name?: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -25,6 +26,7 @@ const LEVEL_COLORS: Record<string, string> = {
 
 export function PasswordStrengthField({
   id,
+  name,
   label,
   value,
   onChange,
@@ -67,6 +69,7 @@ export function PasswordStrengthField({
       >
         <input
           id={id}
+          name={name}
           type={visible ? "text" : "password"}
           required
           autoComplete={autoComplete}

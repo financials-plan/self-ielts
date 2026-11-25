@@ -22,8 +22,10 @@ Tài liệu này hướng dẫn đưa **Self-IELTS** lên Cloud hoàn toàn mi�
    - `DATABASE_URL`: chuỗi `libsql://self-ielts-...turso.io`
    - `DATABASE_AUTH_TOKEN`: token vừa tạo
 
-### Áp dụng schema lên Turso
-Tại thư mục gốc dự án, gán biến môi trường tạm thời rồi đẩy Drizzle schema:
+### Khởi tạo bảng tự động (Zero-Touch Schema)
+Hệ thống đã tích hợp `ensureSchemaInitialized()` — ngay khi kết nối `DATABASE_URL` + `DATABASE_AUTH_TOKEN` và mở trang web (hoặc đăng ký tài khoản đầu tiên), toàn bộ 14 bảng dữ liệu và 435 bài học sẽ tự động được tạo và nạp.
+
+*(Tùy chọn đẩy schema trước từ máy cá nhân bằng Drizzle Kit):*
 
 ```bash
 # PowerShell
@@ -49,9 +51,9 @@ node -e "console.log('BYOK_ENCRYPTION_KEY=' + require('crypto').randomBytes(32).
 
 ## 3. Deploy lên Vercel Hobby Free
 
-1. Push repository lên GitHub (private hoặc public đều được).
-2. Đăng nhập Vercel (chọn gói **Hobby / Free**), import repository.
-3. Trong phần **Environment Variables** của Project Settings, cấu hình đúng theo `.env.example`:
+1. Mở hoặc import repository [financials-plan/self-ielts](https://github.com/financials-plan/self-ielts) trên **Vercel Hobby (Free)** (`https://vercel.com/new/import?s=https://github.com/financials-plan/self-ielts`).
+2. Đăng nhập Vercel bằng GitHub (không cần thẻ tín dụng).
+3. Trong phần **Environment Variables** của Project Settings, cấu hình đúng theo `.env.example` (lưu ý `BETTER_AUTH_URL` tự nhận domain `.vercel.app` qua `VERCEL_PROJECT_PRODUCTION_URL` nếu chưa đặt thủ công):
 
 | Biến môi trường | Bắt buộc | Giá trị mẫu / Ghi chú |
 |---|---|---|

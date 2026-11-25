@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { AppDatabase } from "@/db";
 import { lessons } from "@/db/schema";
+import { ensureSchemaInitialized } from "@/lib/db/autoMigrate";
 
 export type LessonSeedRow = typeof lessons.$inferInsert;
 
@@ -12,7 +13,7 @@ export type LessonSkill = "reading" | "listening" | "writing" | "speaking";
  */
 const seededSkillsCache = new WeakMap<object, Set<string>>();
 
-const BATCH_SIZE = 25;
+const BATCH_SIZE = 8;
 
 export async function seedSkillLessonsBatch(
   database: AppDatabase,
@@ -24,6 +25,8 @@ export async function seedSkillLessonsBatch(
   if (cachedSkills?.has(skill)) {
     return;
   }
+
+  await ensureSchemaInitialized(database);
 
   const existing = await database
     .select({ id: lessons.id })
